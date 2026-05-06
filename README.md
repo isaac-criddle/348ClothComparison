@@ -57,7 +57,7 @@ I’ll compare several systems for cloth simulation for a VFX artist’s nightma
 ### Content
 I'm interested to see if Vertex Block Descent can deliver on its key properties: namely, fast performance and penetration-free collisions.
 
-I set up two key .usd test files to simulate. The first simply drops ten t-shirts on top of each other. The second drops the shirts horizontally into collision geo representing the inside of the dryer, gradually transitions the direction of gravity to the downward direction, and then begins to spin. There are ten T-shirts with 15,762 polygons per shirt--far fewer than a production asset, but sufficient to capture most of the wrinkling one would want from a simulation.
+I set up two key .usd test files to simulate. The first simply drops ten t-shirts on top of each other. The second drops the shirts horizontally into collision geo representing the inside of the dryer, gradually transitions the direction of gravity to the downward direction, and then begins to spin. There are ten T-shirts with 15,762 polygons per shirt--far fewer than a production asset, but similar to the lower end of what might be needed to capture the wrinkling of proxy geometry on a production.
 
 <img width="861" height="757" alt="tshirt_topo" src="https://github.com/user-attachments/assets/23a56dbd-b49b-488f-b0c9-50fdd7f22f16" />
 
@@ -67,7 +67,15 @@ These test cases are designed to stress test what the properties the Vertex Bloc
 I ran the two test cases using Houdini's Vellum solver with substeps at 240Hz.
 
 In the first test case, the shirts intersect heavily with each other early on and then continuously work to get untangled, causing jittering and spurious forces. This took my RTX 4070 1 hour 43 minutes to simulate.
+
 https://github.com/user-attachments/assets/7bba8bda-f2e7-49cc-afc2-106cd84aa544
+
+
+This happens because Vellum's intersection detection is good but not perfect, and once a tangle is created the solver doesn't have much capacity to get untangled.
+
+<img width="536" height="527" alt="close_up_intersections" src="https://github.com/user-attachments/assets/ea77d2c6-48fe-4301-b91c-e571bf5e76b3" />
+
+
 
 I was pleasantly surprised 
 
