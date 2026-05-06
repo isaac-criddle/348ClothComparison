@@ -55,4 +55,19 @@ I’ll compare several systems for cloth simulation for a VFX artist’s nightma
 ## 2. Key Test Cases
 
 ### Content
-I set up two key .usd test files to simulate. The first simply drops ten t-shirts on top of each other. The second drops the shirts horizontally into collision geo representing the inside of the dryer, gradually transitions the direction of gravity to the downward direction, and then begins to spin.
+I'm interested to see if Vertex Block Descent can deliver on its key properties: namely, fast performance and penetration-free collisions.
+
+I set up two key .usd test files to simulate. The first simply drops ten t-shirts on top of each other. The second drops the shirts horizontally into collision geo representing the inside of the dryer, gradually transitions the direction of gravity to the downward direction, and then begins to spin. There are ten T-shirts with 15,762 polygons per shirt--far fewer than a production asset, but sufficient to capture most of the wrinkling one would want from a simulation.
+
+<img width="861" height="757" alt="tshirt_topo" src="https://github.com/user-attachments/assets/23a56dbd-b49b-488f-b0c9-50fdd7f22f16" />
+
+
+These test cases are designed to stress test what the properties the Vertex Block Descent paper claims to have satisfied. While no film or tv show would do a simulation like these, they are indicative of the kinds of problems that show up in production. Pain points include when characters wear multiple layers of clothing or interact with each other, often requiring painful tuning and clever magic tricks to achieve a good visual result.
+
+I ran the two test cases using Houdini's Vellum solver with substeps at 240Hz.
+
+In the first test case, the shirts intersect heavily with each other early on and then continuously work to get untangled, causing jittering and spurious forces. This took my RTX 4070 1 hour 43 minutes to simulate.
+https://github.com/user-attachments/assets/7bba8bda-f2e7-49cc-afc2-106cd84aa544
+
+I was pleasantly surprised 
+
