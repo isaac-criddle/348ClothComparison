@@ -2,6 +2,8 @@
 
 Isaac Criddle
 
+## 1. Introduction
+
 ### Overview
 I’ll compare several systems for cloth simulation for a VFX artist’s nightmare: many layers of interacting cloth. I’ll focus on the case of a running industrial dryer. I plan to compare Houdini Vellum (XPBD) and Blender’s cloth toolset (Provot’s model). I also intend to implement the relatively new Vertex Block Descent algorithm. I’ll start with a VEX implementation in Houdini, but I’ll move to a Python Taichi implementation or even a CUDA implementation if CPU multithreading is prohibitively slow for this use case. My goal is to be able to simulate hundreds of hand towels jostling with each other in the drum without interpenetrations or exploding triangles. Frankly, I don’t expect this to be possible with *any* of the existing methods with simulation times less than a day on a laptop.
 
@@ -49,3 +51,8 @@ I’ll compare several systems for cloth simulation for a VFX artist’s nightma
 ### Help needed
 * I don’t expect to require much technical help, though I’m sure I’ll consult the teaching staff a few times for sanity and broader conceptual counsel.
 * I’ll be gone to present at a conference the first week of May, so my first submission will be underdeveloped. I’ll make up for the lost time, but I do hope for some grace from the teaching staff as they evaluate my first check-in.
+
+## 2. Key Test Cases
+
+### Content
+I set up two key .usd test files to simulate. The first simply drops ten t-shirts on top of each other. The second drops the shirts horizontally into collision geo representing the inside of the dryer, gradually transitions the direction of gravity to the downward direction, and then begins to spin.
