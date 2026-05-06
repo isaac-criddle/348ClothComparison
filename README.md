@@ -81,7 +81,7 @@ I was pleasantly surprised by Vellum's performance with the dryer at 240Hz subst
 
 https://github.com/user-attachments/assets/6aada6af-5101-45aa-8fc1-ba7e50de064c
 
-Unfortunately, when I ran the simulation at 24Hz, or one substep per frame, the simulation ran in 2 hours and 6 minutes. In other words, it is impossible to get interactive feedback by lowering the number of substeps with Vellum. Not only that, but at 24Hz there is an enormous amount of collsion. I would have to lower the resolution of the proxy geometry to increase performance, but with lower simulation geometry resolution, the stiffnesses of the constraints behave very differently, which would result in very different material properties.
+Unfortunately, when I ran the simulation at 24Hz, or one substep per frame, the simulation ran in 2 hours and 6 minutes. In other words, it is impossible to get interactive feedback by lowering the number of substeps with Vellum. Not only that, but at 24Hz there is an enormous amount of collision. I would have to lower the resolution of the proxy geometry to increase performance, but with lower simulation geometry resolution, the stiffnesses of the constraints behave very differently, which would result in very different material properties.
 
 I'm including the 24Hz version in part because the artifacts shown resemble my personal experiences with Vellum on animated productions.
 
