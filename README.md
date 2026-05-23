@@ -108,7 +108,7 @@ Beyond the test cases above, I would ideally like to stress test against a few o
 |  | **Vellum** | **VBD** | **Vellum** | **VBD** | **Vellum** | **VBD** |
 | Ten Shirts Dropping | - | - | - | - | - | - |
 | High-Velocity Impact | - | - | - | - | - | - |
-| Compressed Stack | - | - | - | - | - | - |
+| Compressed Stack | - | - | - | - | - | - | - |
 | Dryer Spin (10 sub.) | - | - | - | - | - | - |
 | Dryer Spin (1 sub.) | - | - | - | - | - | - |
 
