@@ -108,11 +108,11 @@ Beyond the test cases above, I would ideally like to stress test against a few o
 | Test Case | Penetrating Points |  | Total Kinetic Energy (J) |  | Time/Frame (s) |  |
 |---|---:|---:|---:|---:|---:|---:|
 |  | **Vellum** | **VBD** | **Vellum** | **VBD** | **Vellum** | **VBD** |
-| Ten Shirts Dropping | - | - | - | - | - | - |
+| Ten Shirts Dropping | - | 1.250e6 | - | - | 12.9 | - |
 | High-Velocity Impact | - | - | - | - | - | - |
-| Compressed Stack | - | - | - | - | - | - | - |
-| Dryer Spin (10 sub.) | - | - | - | - | - | - |
-| Dryer Spin (1 sub.) | - | - | - | - | - | - |
+| One Shirt Compressed | - | - | - | - | - | - | - |
+| Dryer Spin (10 sub.) | - | 9.936e4 | - | - | 19.2 | - |
+| Dryer Spin (1 sub.) | - | 3.151e7 | - | - | 15.8 | - |
 
 In general, we want less total kinetic energy from a simulation, as high kinetic energy can be a sign of jittering or spurious forces. Obviously, there are many bad ways to lower kinetic energy in a simulation, but I'm not aware of a better way to quantify jittering behavior in general.
 At the end of the day, I'm interested in Vertex Block for three of its claims: near-zero bad penetrations, numerical stability, and performance, and this table is the simplest way I've found to compare these qualities, besides examining the simulations for undesired qualities visually.
