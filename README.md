@@ -103,8 +103,8 @@ I will continue to hack away at this problem, and it's actually been quite fun d
 
 Beyond the test cases above, I would ideally like to stress test against a few other cases, namely, I'd like to fill out the following table:
 
-|  | Penetrating Points |  | Total Kinetic Energy (J) |  | Time/Frame (s) |  |
-| Test Case |---:|---:|---:|---:|---:|---:|
+| Test Case | Penetrating Points |  | Total Kinetic Energy (J) |  | Time/Frame (s) |  |
+|---|---:|---:|---:|---:|---:|---:|
 |  | **Vellum** | **VBD** | **Vellum** | **VBD** | **Vellum** | **VBD** |
 | Ten Shirts Dropping | - | - | - | - | - | - |
 | High-Velocity Impact | - | - | - | - | - | - |
