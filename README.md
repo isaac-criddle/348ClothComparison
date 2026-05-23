@@ -97,20 +97,22 @@ Upon implementing Vertex Block Descent, I hope to be able to run the dryer simul
 ## 3. Update: Debug Hell
 I've spent the last few weeks trying to get Vertex Block Descent working at the most basic level, including starting from scratch a few times. I have rapidly gained respect for those who develop production systems for similar solvers. I've been successful at least solving simple forces, but I've been struggling to get continuous collision detection and bend constraints functioning. I am certain that my test geometry for the shirt does not self-penetrate initially, and yet the solver's output often behaves unstably as though there were initial interpenetrations.
 
-I had decided to build my first implementation in VEX, which I am now reconsidering. VEX is Houdini's CPU-based geometry processing DSL with intrinsic SIMD with a JIT compiler. It has impressive speed, often beating compiled C++ for geometry processing tasks, but there are fewer resources to help me understand my mistakes. Most recently, I've been trying to work with Claude to identify logic errors, but this has turned out to be unwieldy because 1) Houdini's node structure involves more overhead in interacting with an LLM, and 2) there is less VEX in the training data, which means that the LLMs often make mistakes with certain funny nuances of the language.
+I had decided to build my first implementation in VEX, which I am now reconsidering. VEX is Houdini's CPU-based geometry processing DSL with intrinsic SIMD with a JIT compiler. It has impressive speed, often beating compiled C++ for geometry processing tasks, but there are fewer resources to help me understand my mistakes. Most recently, I've been trying to work with Claude to identify logic errors, but this has turned out to be quite unwieldy because 1) Houdini's node structure involves more overhead in interacting with an LLM, and 2) there is less VEX in the training data, which means that the LLMs often make mistakes with certain funny nuances of the language.
 
-I will continue to hack away at this problem, and it's actually been quite fun despite the difficulties, but I do fear the scenario in which I reach the end of my timeline without a worthy implementation to compare against Vellum. If I reach next Saturday or so without resolving my mistakes, I'll resort to using the Vertex Block Descent authors' implementation to generate my comparisons.
+I will continue to hack away at this problem, and it's actually been quite fun despite the difficulties, but I do fear the scenario in which I reach the end of my timeline without a worthy implementation to compare against Vellum. If I reach next Saturday or so without resolving my mistakes, I'll resort to using the Vertex Block Descent authors' implementation to generate comparisons.
 
 Beyond the test cases above, I would ideally like to stress test against a few other cases, namely, I'd like to fill out the following table:
 
-| Test Case | Penetrating Points |  | Total Kinetic Energy (J) |  | Time/Frame (ms) |  |
-|---|---:|---:|---:|---:|---:|---:|
+|  | Penetrating Points |  | Total Kinetic Energy (J) |  | Time/Frame (s) |  |
+|Test Case|---:|---:|---:|---:|---:|---:|
 |  | **Vellum** | **VBD** | **Vellum** | **VBD** | **Vellum** | **VBD** |
 | Ten Shirts Dropping | - | - | - | - | - | - |
 | High-Velocity Impact | - | - | - | - | - | - |
 | Compressed Stack | - | - | - | - | - | - | - |
 | Dryer Spin (10 sub.) | - | - | - | - | - | - |
 | Dryer Spin (1 sub.) | - | - | - | - | - | - |
+In general, we want less total kinetic energy from a simulation, as high kinetic energy can be a sign of jittering or spurious forces. Obviously, there are many bad ways to lower kinetic energy in a simulation, but I'm not aware of a better way to quantify jittering behavior in general.
+At the end of the day, I'm interested in Vertex Block for three of its claims: near-zero bad penetrations, numerical stability, and performance, and this table is the simplest way I've found to compare these qualities, besides examining the simulations for undesired qualities visually.
 
 https://github.com/user-attachments/assets/89a40380-9fa0-4ffc-9d46-15f32d9a4a45
 
