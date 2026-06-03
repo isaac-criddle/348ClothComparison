@@ -1,0 +1,193 @@
+// VBD Gauss-Seidel Step - Process all colors sequentially
+// Run Over: Points
+// Input 0: Cloth geometry (feedback from iteration)
+// Input 1: Constraint geometry
+
+int constraint_geo = 1;
+int debug = chi('debug_mode');
+
+// Constants
+float EPSILON = 1e-8;
+
+// Get solver parameters
+float dt = chf('dt');
+float ground_height = chf('ground_height');
+int ground_enabled = chi('ground_enabled');
+float collision_stiffness = chf('collision_stiffness');
+
+// Get number of graph colors from detail attribute
+int graph_color_count = detail(0, "graph_color_count", 0);
+
+// Get this point's properties
+int pt = @ptnum;
+int pt_color = i@color;
+int pinned = i@pinned;
+float mass = f@mass;
+vector P_inertial = v@P_inertial;
+
+// Compute timestep squared (used in VBD formulation)
+float dt2 = dt * dt;
+
+// === Process collision constraints from previous iteration ===
+vector collision_targets_to_process[] = v[]@collision_targets;
+
+int current_color = detail(2, 'iteration');
+
+// Only process points of the current color
+if (pt_color != current_color) return;
+
+// Pinned points don't move
+if (pinned) {
+    if (debug) {
+        @Cd = {1, 1, 0};  // Yellow for pinned
+    }
+    return;
+}
+
+// Store position before processing (for debug)
+vector P_before = v@P;
+
+// Initialize accumulators for this point
+vector P_sum = {0, 0, 0};
+float weight_sum = 0;
+
+// Get this point's constraint list
+int constraint_prims[] = i[]@constraint_prims;
+
+// Debug counter
+int num_constraints_processed = 0;
+
+// Process each constraint this point participates in
+foreach (int prim; constraint_prims) {
+    
+    // Get constraint type and properties
+    string constraint_type = prim(constraint_geo, "type", prim);
+    float stiffness = prim(constraint_geo, "stiffness", prim);
+    
+    // Skip if stiffness is too low
+    if (stiffness < EPSILON) continue;
+    
+    if (constraint_type == "distance") {
+        // Stretch constraint - 2 points
+        int verts[] = primpoints(constraint_geo, prim);
+        
+        if (len(verts) != 2) continue;
+        
+        int pt0 = verts[0];
+        int pt1 = verts[1];
+        int other_pt = (pt0 == pt) ? pt1 : pt0;
+        
+        // Read current positions
+        vector P_this = v@P;
+        vector P_other = point(0, "P", other_pt);
+        float mass_this = mass;
+        float mass_other = point(0, "mass", other_pt);
+        float restlength = prim(constraint_geo, "restlength", prim);
+        float dampingratio = prim(constraint_geo, "dampingratio", prim);
+        
+        // Compute current vector and length
+        vector d = P_other - P_this;
+        float len = length(d);
+        
+        if (len < EPSILON) continue;
+        
+        // Compute constraint direction
+        vector dir = d / len;
+        
+        // Position correction
+        float correction_dist = len - restlength;
+        
+        // Mass-weighted correction
+        float total_mass = mass_this + mass_other;
+        float mass_ratio;
+        
+        if (total_mass < EPSILON) {
+            mass_ratio = 0.5;
+        } else {
+            mass_ratio = mass_other / total_mass;
+        }
+        
+        // Project this point toward satisfying constraint
+        vector P_projected = P_this + mass_ratio * correction_dist * dir;
+        
+        float k_constraint = stiffness / dt2;
+        
+        // Optional damping (VBD Equation 11)
+        // H_damped = H * (1 + k_d/h)
+        if (dampingratio > 0) {
+            k_constraint *= (1.0 + dampingratio / dt);
+        }
+        
+        // Accumulate weighted projection
+        P_sum += k_constraint * P_projected;
+        weight_sum += k_constraint;
+        
+        num_constraints_processed++;
+    }
+}
+
+// === Process collision constraints ===
+int num_collision_constraints = len(collision_targets_to_process);
+
+for (int i = 0; i < num_collision_constraints; i++) {
+    vector target = collision_targets_to_process[i];
+    
+    // CHANGED (Bug #2): Use VBD formulation - stiffness directly as weight
+    float k_collision = collision_stiffness;
+    
+    P_sum += k_collision * target;
+    weight_sum += k_collision;
+    
+    num_constraints_processed++;
+    
+    if (debug) {
+        @Cd = {1, 0, 1};  // Magenta for collision constraint
+    }
+}
+
+// Ground plane collision constraint
+if (ground_enabled && v@P.y < ground_height) {
+    vector P_ground = v@P;
+    P_ground.y = ground_height;
+    
+    float k_ground = collision_stiffness;
+    
+    P_sum += k_ground * P_ground;
+    weight_sum += k_ground;
+    
+    if (debug) {
+        @Cd = {1, 0, 0};  // Red for ground collision
+    }
+}
+
+// === Inertial term ===
+// Inertial weight is mass/dt² (from VBD Equation 8)
+float w_inertial = mass / dt2;
+P_sum += w_inertial * P_inertial;
+weight_sum += w_inertial;
+
+@Cd = rand(@color);
+
+// Compute weighted average (equivalent to VBD local solve)
+if (weight_sum > EPSILON) {
+    v@P = P_sum / weight_sum;
+} else {
+    // Shouldn't happen
+    v@P = P_inertial;
+    
+    if (debug) {
+        @Cd = {0, 0, 1};  // Blue for error case
+    }
+}
+
+// Store debug info
+if (debug && current_color == graph_color_count - 1) {
+    f@debug_weight = weight_sum;
+    f@debug_inertial_weight = w_inertial;
+    i@debug_constraints = num_constraints_processed;
+}
+
+// Final debug visualization
+if (debug && !pinned) {
+    @Cd = {0, 1, 0};  // Green for processed
+}
