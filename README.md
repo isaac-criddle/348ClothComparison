@@ -109,7 +109,7 @@ Looking back at the VBD paper, the authors compare against XPBD using tetrahedra
 | Spurious forces | Dissipation |
 | Explodes at times | Kills gravity at times |
 
-<img width="1920" height="1152" alt="graph_color" src="https://github.com/user-attachments/assets/b7e39b18-62dd-41c9-8316-754363a73e08" />
+<img width="1128" height="323" alt="graph_color2" src="https://github.com/user-attachments/assets/3247bdb6-3a8c-4c34-abac-e64e92bb0a02" />
 
 When damping is introduced to VBD as described in the paper, energy is lost by allowing the material to stretch. When low iteration counts limit VBD's convergence, it tends either to kill inertia, effectively reducing gravity, or to leave cloth constraints unsatisfied, resulting in additional stretch.
 
