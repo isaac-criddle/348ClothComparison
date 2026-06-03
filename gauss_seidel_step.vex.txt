@@ -1,3 +1,6 @@
+// This is the core VBD wrangle used to step the simulation for a single graph color.
+
+
 // VBD Gauss-Seidel Step - Process all colors sequentially
 // Run Over: Points
 // Input 0: Cloth geometry (feedback from iteration)
