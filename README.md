@@ -52,10 +52,6 @@ Beginning first with isolated points, then with very simple cloth meshes, I impl
 
 Upon first implementation, I noticed that the solver derived a cloth object's material stiffness not from the stiffness parameter passed in with the constraint geometry, but rather from the number of VBD iterations. Another strange behavior was that high stiffnesses seemed to weaken the effect of gravity. It took me many hours of troubleshooting to realize that these behaviors were not necessarily just flaws of my implementation specifically, but rather artifacts of the Vertex Block Descent algorithm itself.
 
-
-
-
-
 https://github.com/user-attachments/assets/849a8e1c-b840-4072-b828-a07b7ffc3fe3
 ###### High stiffness, 4 substeps, 100 VBD iterations
 
@@ -80,11 +76,11 @@ At this project's inception, I defined success as a functional, performant Verte
 
 This implementation does run in Houdini, and it does implement the primary elements of Vertex Block Descent, namely, Gauss-Seidel iteration over points to satisfy a variational formulation of each point's constraints.
 
-It is also more stable than Vellum. I ran the following simulation without self-collisions, taking 6 minutes on an I9 CPU with 24 threads:
+My implementation is also more stable than Vellum. I ran the following simulation without self-collisions, taking 6 minutes on an I9 CPU with 24 threads, ~80,000 points, 240 time steps:
 
 https://github.com/user-attachments/assets/574f176e-e0c6-4f8a-9481-6d85b9055e38
 
-And subsequently in Vellum on a 4080ti GPU:
+To compare against Vellum on a 4080ti GPU with the same parameters:
 
 https://github.com/user-attachments/assets/b4e746f5-3c31-4650-b42f-be4ad39a4322
 
@@ -109,7 +105,7 @@ Looking back at the VBD paper, the authors compare against XPBD using tetrahedra
 | Spurious forces | Dissipation |
 | Explodes at times | Kills gravity at times |
 
-<img width="1128" height="323" alt="graph_color2" src="https://github.com/user-attachments/assets/3247bdb6-3a8c-4c34-abac-e64e92bb0a02" />
+<img width="1128" height="323" alt="graph_color2" src="https://github.com/user-attachments/assets/06059ce9-0b9e-4a8c-9bbd-3b63ec9a88c4" />
 
 When damping is introduced to VBD as described in the paper, energy is lost by allowing the material to stretch. When low iteration counts limit VBD's convergence, it tends either to kill inertia, effectively reducing gravity, or to leave cloth constraints unsatisfied, resulting in additional stretch.
 
@@ -117,7 +113,7 @@ I am unconvinced by the arguments put forward that VBD is generally faster than 
 
 It is my belief that VBD as outlined in the 2024 paper will be useful for certain kinds of tetrahedral soft body simulation, especially in situations with quasistatic-like behavior. For instance, VBD might be very powerful for VR-based medical training simulations. However, for linear content, where we care deeply about material properties, additional stretch violates artistic intent, so erring in the direction of jitter for a cloth simulation is preferable, especially since we can use procedural methods to filter the simulation output post-sim, but it's not possible to change the stiffness of the cloth post-sim.
 
-I speculate that 20 years from now, assuming similar hardware to today, the most widely used cloth simulation toolsets for artistic use cases will be highly adaptive composite approaches, leveraging several types of simulation for their respective strengths at various time steps, iterations, and neighborhoods. For example, preconditioning with a global solve to first solve for inertia and gravity and then applying XPBD to preserve cloth properties. Today, artists already composite together results from several different simulations, but they do so in a heuristic manner. Perhaps by that point there will be enough good training data available to do solid reduced-order modeling for both blazing-fast performance and perfectly faithful material properties.
+I speculate that 15 years from now, assuming similar hardware to what we have today, the most widely used cloth simulation toolsets for artistic use cases will be highly adaptive composite approaches, leveraging several types of simulation for their respective strengths at various time steps, iterations, and neighborhoods. For example, preconditioning with a global solve to first solve for inertia and gravity and then applying XPBD to preserve cloth properties. Today, artists already composite together results from several different simulations, but they do so in a heuristic manner. Perhaps by that point there will be enough good training data available to do solid reduced-order modeling for both blazing-fast performance and perfectly faithful material properties.
 
 
 ###### References
