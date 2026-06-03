@@ -1,3 +1,7 @@
+
+
+https://github.com/user-attachments/assets/8eb7f7c6-f447-41e6-85e8-56e97ac344a3
+
 # Airing the Dirty Laundry of Cloth Simulation
 ###### < Isaac Criddle, icriddle@stanford >
 
@@ -22,6 +26,8 @@ A desire for efficient cloth simulation in practice means that implementations o
 While XPBD was originally introduced at MIG '16, a video game conference, its efficient problem formulation led to further adoption far beyond games, including medical simulators, film, and many other application domains. Notably, SideFX software developed a toolset called Vellum built around XPBD that unifies hair, cloth, soft body, grains and fluids into a single solver. Vellum has enjoyed widespread adoption in animation, visual effects and games.
 
 While Vellum does well as a controllable toolset, it suffers when used with low timesteps and iteration counts. Specifically, Vellum often yields jittery, high-energy results caused by insufficient convergence, and its discrete collision detection formulation turns small interpenetrations into spurious forces and sometimes exploding geometry.
+
+https://github.com/user-attachments/assets/8cd8eb96-b287-4e36-919f-48d4f47196e5
 
 At SIGGRAPH 2024, Chen et al. introduced Vertex Block Descent, a new iterative variational solver based on similar principles. Rather than iterating over graph colors on constraints, Vertex Block Descent graph colors the cloth's _vertices_, moving each point toward its local optimum while holding its neighbors steady. To do so, it approximates an energy neighborhood for the point, constructed from constraints, forces and collisions, with a quadratic equation, whose solution involves inverting a Hessian matrix.
 
@@ -50,6 +56,16 @@ Beginning first with isolated points, then with very simple cloth meshes, I impl
 
 Upon first implementation, I noticed that the solver derived a cloth object's material stiffness not from the stiffness parameter passed in with the constraint geometry, but rather from the number of VBD iterations. Another strange behavior was that high stiffnesses seemed to weaken the effect of gravity. It took me many hours of troubleshooting to realize that these behaviors were not necessarily just flaws of my implementation specifically, but rather artifacts of the Vertex Block Descent algorithm itself.
 
+
+
+
+
+https://github.com/user-attachments/assets/849a8e1c-b840-4072-b828-a07b7ffc3fe3
+###### High stiffness, 4 substeps, 100 VBD iterations
+
+https://github.com/user-attachments/assets/0a4048db-06dc-4b00-a290-e0075ed85287
+###### Run with very high iteration count
+
 After implementing stretch stiffness constraints and the core VBD logic, I went about implementing triangle-point continuous collision detection, which the paper uses alongside edge-edge CCD and an initial discrete collision detection pass at every time step. This involves many expensive cubic equation solves, and is nontrivial to debug. As in the case of stretch stiffnesses, I spent time searching out why a cloth object would self-penetrate easily despite each collision being _detected_ without error, only to come to understand that VBD's approach of inserting additional springs to resolve penetrations does not guarantee penetration-free behavior, as such collision constraints will fight a vertex's inertia and material constraints.
 
 It became clear to me around this time that to get a clear picture of Vertex Block Descent's place in the simulation ecosystem I would need to evaluate a more robust implementation.
@@ -65,13 +81,13 @@ At this project's inception, I defined success as a functional, performant Verte
 
 This implementation does run in Houdini, and it does implement the primary elements of Vertex Block Descent, namely, Gauss-Seidel iteration over points to satisfy a variational formulation of each point's constraints.
 
-It is also more stable than Vellum. I ran the following simulation without self-collisions:
+It is also more stable than Vellum. I ran the following simulation without self-collisions, taking 6 minutes on an I9 CPU with 24 threads:
 
-\SHOW
+https://github.com/user-attachments/assets/574f176e-e0c6-4f8a-9481-6d85b9055e38
 
-And subsequently in Vellum:
+And subsequently in Vellum on a 4080ti GPU:
 
-\SHOW
+https://github.com/user-attachments/assets/b4e746f5-3c31-4650-b42f-be4ad39a4322
 
 I'm certain there is some combination of parameters in Vellum that would keep the simulation from blowing up like this, but no such tuning is necessary with VBD as implemented.
 
