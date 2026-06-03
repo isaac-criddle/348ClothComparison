@@ -1,7 +1,3 @@
-
-
-https://github.com/user-attachments/assets/8eb7f7c6-f447-41e6-85e8-56e97ac344a3
-
 # Airing the Dirty Laundry of Cloth Simulation
 ###### < Isaac Criddle, icriddle@stanford >
 
@@ -66,7 +62,10 @@ https://github.com/user-attachments/assets/849a8e1c-b840-4072-b828-a07b7ffc3fe3
 https://github.com/user-attachments/assets/0a4048db-06dc-4b00-a290-e0075ed85287
 ###### Run with very high iteration count
 
-After implementing stretch stiffness constraints and the core VBD logic, I went about implementing triangle-point continuous collision detection, which the paper uses alongside edge-edge CCD and an initial discrete collision detection pass at every time step. This involves many expensive cubic equation solves, and is nontrivial to debug. As in the case of stretch stiffnesses, I spent time searching out why a cloth object would self-penetrate easily despite each collision being _detected_ without error, only to come to understand that VBD's approach of inserting additional springs to resolve penetrations does not guarantee penetration-free behavior, as such collision constraints will fight a vertex's inertia and material constraints.
+After implementing stretch stiffness constraints and the core VBD logic, I went about implementing triangle-point continuous collision detection, which the paper uses alongside edge-edge CCD and an initial discrete collision detection pass at every time step. This involves many expensive cubic equation solves, and is nontrivial to debug. As in the case of stretch stiffnesses, I spent time searching out why a cloth object would self-penetrate easily despite each collision being _detected_ without error, only to come to understand that VBD's approach of inserting additional springs to resolve penetrations does not guarantee penetration-free behavior, as such collision constraints will fight a vertex's inertia and material constraints.<img width="1920" height="1152" alt="graph_color" src="https://github.com/user-attachments/assets/4d9879de-62b7-48dd-8aa9-63ea448c2164" />
+
+
+https://github.com/user-attachments/assets/da1b3022-1106-48c8-a306-b40c372be866
 
 It became clear to me around this time that to get a clear picture of Vertex Block Descent's place in the simulation ecosystem I would need to evaluate a more robust implementation.
 
@@ -109,6 +108,8 @@ Looking back at the VBD paper, the authors compare against XPBD using tetrahedra
 | Jitters | Stretches |
 | Spurious forces | Dissipation |
 | Explodes at times | Kills gravity at times |
+
+<img width="1920" height="1152" alt="graph_color" src="https://github.com/user-attachments/assets/b7e39b18-62dd-41c9-8316-754363a73e08" />
 
 When damping is introduced to VBD as described in the paper, energy is lost by allowing the material to stretch. When low iteration counts limit VBD's convergence, it tends either to kill inertia, effectively reducing gravity, or to leave cloth constraints unsatisfied, resulting in additional stretch.
 
